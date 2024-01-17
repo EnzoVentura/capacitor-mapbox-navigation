@@ -11,7 +11,7 @@
     "test.unit": "vitest",
     "lint": "eslint",
     "ios": "ionic cap sync && ionic cap open ios",
-    "run.ios": "ionic cap run ios --livereload --external"
+    "run.ios": "ionic cap sync && ionic cap run ios --livereload --external"
   },
   "dependencies": {
     "@capacitor/app": "5.0.6",

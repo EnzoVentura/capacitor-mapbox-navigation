@@ -1,16 +1,12 @@
 import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
-import './Home.css';
-import React from "react";
+import React, {useEffect} from "react";
 
 import {MapboxNavigation} from "../plugins/mapboxNavigation";
 
 const Home: React.FC = () => {
 
   function requestPerms() {
-    /*MapboxNavigation.checkLocationPermissions().then((result) => {
-      console.log("checkLocationPermissions", result)
-    })*/
     MapboxNavigation.requestLocationPermissions().then(() => {
       console.log('requestLocationPermissions')
     })
@@ -22,6 +18,12 @@ const Home: React.FC = () => {
       window.alert("checkLocationPermissions: " + result)
     })
   }
+
+  useEffect(() => {
+    MapboxNavigation.simulateNavigation().then(() => {
+      console.log('simulateNavigation')
+    })
+  }, []);
 
   return (
     <IonPage>
