@@ -78,8 +78,7 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
         for route in routes {
             waypoints.append(Waypoint(coordinate: CLLocationCoordinate2DMake(route["latitude"] as! CLLocationDegrees, route["longitude"] as! CLLocationDegrees)))
         }
-
-        let isSimulate = call.getBool("simulating") ?? false
+        
         let routeOptions = NavigationRouteOptions(waypoints: waypoints, profileIdentifier: .cycling)
     
         Directions.shared.calculate(routeOptions) { [weak self] (session, result) in
@@ -87,18 +86,22 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
                 case .failure(let error):
                     print(error.localizedDescription)
                 case .success(let response):
-                    guard let route = response.routes?.first, let strongSelf = self else {
+                    guard let strongSelf = self else {
                         return
                     }
-                            
-                    let navigationService = MapboxNavigationService(routeResponse: response, routeIndex: 0, routeOptions: routeOptions, simulating: .never)
+                
+                    let indexedRouteResponse = IndexedRouteResponse(routeResponse: response, routeIndex: 0);
+                    let navigationService = MapboxNavigationService(indexedRouteResponse: indexedRouteResponse, customRoutingProvider: NavigationSettings.shared.directions, credentials: NavigationSettings.shared.directions.credentials, simulating: .always)
+                
                     let navigationOptions = NavigationOptions(navigationService: navigationService)
-                            
-
-                let viewController = NavigationViewController(for: response, routeIndex: 0, routeOptions: routeOptions, navigationOptions: navigationOptions)
+                    let viewController = NavigationViewController(for: indexedRouteResponse, navigationOptions: navigationOptions)
+                    
                     viewController.modalPresentationStyle = .fullScreen
+                    // Render part of the route that has been traversed with full transparency, to give the illusion of a disappearing route.
+                    viewController.routeLineTracksTraversal = true
                     viewController.waypointStyle = .extrudedBuilding;
                     viewController.delegate = strongSelf;
+                    
                     DispatchQueue.main.async {
                         self?.setCenteredPopover(viewController)
                         self?.bridge?.viewController?.present(viewController, animated: true, completion: nil)
