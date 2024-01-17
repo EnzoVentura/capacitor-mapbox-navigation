@@ -18,5 +18,5 @@ export interface IMapboxNavigation {
    * Test simulated navigation
    * @since 0.0.1
    */
-  simulateNavigation({routes}: { routes: Array<ILocation> }): Promise<void>;
+  launchNavigation({routes}: { routes: Array<ILocation> }): Promise<void>;
 }

@@ -69,7 +69,7 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
 //        }
 //    }
     
-    @objc public func simulateNavigation(_ call : CAPPluginCall) {lastLocation = Location(longitude: 0.0, latitude: 0.0);
+    @objc public func launchNavigation(_ call : CAPPluginCall) {lastLocation = Location(longitude: 0.0, latitude: 0.0);
         routes = call.getArray("routes", NSDictionary.self) ?? [NSDictionary]()
         var waypoints = [Waypoint]();
         

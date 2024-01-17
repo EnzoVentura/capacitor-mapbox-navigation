@@ -30,7 +30,7 @@ const Home: React.FC = () => {
       longitude: 3.021310992223101
     }
 
-    MapboxNavigation.simulateNavigation({routes : [origin, destination]})
+    MapboxNavigation.launchNavigation({routes : [origin, destination]})
   }
 
   return (
