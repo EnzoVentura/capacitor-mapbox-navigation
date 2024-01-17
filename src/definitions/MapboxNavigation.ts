@@ -1,3 +1,5 @@
+import {ILocation} from "../types/location";
+
 export interface IMapboxNavigation {
   /**
    * Check the location permissions of the device.
@@ -13,8 +15,8 @@ export interface IMapboxNavigation {
 
 
   /**
-   * Test simulate navigation
+   * Test simulated navigation
    * @since 0.0.1
    */
-  simulateNavigation(): Promise<void>;
+  simulateNavigation({routes}: { routes: Array<ILocation> }): Promise<void>;
 }

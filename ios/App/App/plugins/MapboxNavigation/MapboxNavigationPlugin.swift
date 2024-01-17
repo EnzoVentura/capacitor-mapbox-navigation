@@ -17,6 +17,11 @@ struct Location: Codable {
     var when: String = ""
 }
 
+protocol ILocation {
+    var longitude: Int {get}
+    var latitude: Int {get}
+}
+
 var lastLocation: Location?;
 var locationHistory: NSMutableArray?;
 var routes = [NSDictionary]();
@@ -46,26 +51,37 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
         call.resolve()
     }
     
-    @objc public func simulateNavigation(_ call : CAPPluginCall) {
-        lastLocation = Location(longitude: 50.66321307606863, latitude: 3.0497136739770494);
-        locationHistory?.removeAllObjects()
+//    func extractPosition(data: [String: Double]) -> [Double]? {
+//        if let longitude = data["longitude"], let latitude = data["latitude"] {
+//            let output = Waypoint(coordinate: CLLO)
+//            
+//            
+//            let output = [longitude, latitude]
+//            
+//            
+//            
+//            
+//            print(output)
+//            return (output)
+//        } else {
+//            print("The 'longitude' and 'latitude' keys are required.")
+//            return nil
+//        }
+//    }
+    
+    @objc public func simulateNavigation(_ call : CAPPluginCall) {lastLocation = Location(longitude: 0.0, latitude: 0.0);
         routes = call.getArray("routes", NSDictionary.self) ?? [NSDictionary]()
-
+        var waypoints = [Waypoint]();
         
-        let origin = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 50.66321307606863, longitude: 3.0497136739770494), name: "House")
-        let destination = Waypoint(coordinate: CLLocationCoordinate2D(latitude:50.63426855813194 , longitude: 3.0213107053877764), name: "Work")
-        var waypoints = [Waypoint]([origin, destination]);
+        print("SWIFT: routes ", routes)
         
         for route in routes {
-            print(route["latitude"] as! CLLocationDegrees)
-            waypoints.append(Waypoint(coordinate: CLLocationCoordinate2DMake(route["latitude"] as! CLLocationDegrees, route["longtitude"] as! CLLocationDegrees)))
+            waypoints.append(Waypoint(coordinate: CLLocationCoordinate2DMake(route["latitude"] as! CLLocationDegrees, route["longitude"] as! CLLocationDegrees)))
         }
+
         let isSimulate = call.getBool("simulating") ?? false
-        let routeOptions = NavigationRouteOptions(waypoints: waypoints, profileIdentifier: .automobile)
-        
-        print(isSimulate)
-        print(routeOptions)
-        
+        let routeOptions = NavigationRouteOptions(waypoints: waypoints, profileIdentifier: .cycling)
+    
         Directions.shared.calculate(routeOptions) { [weak self] (session, result) in
             switch result {
                 case .failure(let error):
@@ -75,10 +91,11 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
                         return
                     }
                             
-                    let navigationService = MapboxNavigationService(routeResponse: response, routeIndex: 0, routeOptions: routeOptions, simulating: isSimulate ? .always : .never)
+                    let navigationService = MapboxNavigationService(routeResponse: response, routeIndex: 0, routeOptions: routeOptions, simulating: .never)
                     let navigationOptions = NavigationOptions(navigationService: navigationService)
                             
-                    let viewController = NavigationViewController(for: response, routeIndex: 0, routeOptions: routeOptions, navigationOptions: navigationOptions)
+
+                let viewController = NavigationViewController(for: response, routeIndex: 0, routeOptions: routeOptions, navigationOptions: navigationOptions)
                     viewController.modalPresentationStyle = .fullScreen
                     viewController.waypointStyle = .extrudedBuilding;
                     viewController.delegate = strongSelf;

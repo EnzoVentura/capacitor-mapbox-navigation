@@ -19,11 +19,19 @@ const Home: React.FC = () => {
     })
   }
 
-  useEffect(() => {
-    MapboxNavigation.simulateNavigation().then(() => {
-      console.log('simulateNavigation')
-    })
-  }, []);
+  function testPassString() {
+    const origin = {
+      latitude: 50.66322650877968,
+      longitude: 3.0496891925960754
+    }
+
+    const destination = {
+      latitude: 50.63421502456915,
+      longitude: 3.021310992223101
+    }
+
+    MapboxNavigation.simulateNavigation({routes : [origin, destination]})
+  }
 
   return (
     <IonPage>
@@ -48,6 +56,10 @@ const Home: React.FC = () => {
         <IonButton onClick={() => {
           checkPerms()
         }}>Check permissions</IonButton>
+
+        <IonButton onClick={() => {
+          testPassString()
+        }}>Test</IonButton>
       </IonContent>
     </IonPage>
   );
