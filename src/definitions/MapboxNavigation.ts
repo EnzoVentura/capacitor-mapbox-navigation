@@ -8,22 +8,27 @@ export enum ProfileIdentifier {
 }
 
 export interface IMapboxNavigation {
-  /**
+  /*/!**
    * Check the location permissions of the device.
    * @since 0.0.1
-   */
+   *!/
   checkLocationPermissions(): Promise<{ value: string }>;
 
-  /**
+  /!**
    * Request location permissions from the device.
    * @since 0.0.1
-   */
+   *!/
   requestLocationPermissions(): Promise<void>;
-
+*/
 
   /**
    * Test simulated navigation
    * @since 0.0.1
    */
-  launchNavigation({routes, profile}: { routes: Array<ILocation>, profile?: ProfileIdentifier }): Promise<void>;
+  launchNavigation({routes, profile}: { routes: Array<ILocation>, profile?: ProfileIdentifier }): Promise<void>;/**
+
+   * Visualize the route on the map
+   * @since 0.0.1
+   */
+  visualizeRoute({routes}: { routes: Array<ILocation>}): Promise<void>;
 }

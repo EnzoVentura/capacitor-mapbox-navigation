@@ -4,20 +4,6 @@ import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@
 import {MapboxNavigation, ProfileIdentifier} from "../plugins/mapboxNavigation";
 
 const Home: React.FC = () => {
-
-  function requestPerms() {
-    MapboxNavigation.requestLocationPermissions().then(() => {
-      console.log('requestLocationPermissions')
-    })
-  }
-
-  function checkPerms() {
-    MapboxNavigation.checkLocationPermissions().then((result) => {
-      console.log("checkLocationPermissions", result)
-      window.alert("checkLocationPermissions: " + result)
-    })
-  }
-
   function launchNavigation() {
     const origin = {
       latitude: 50.66322650877968,
@@ -31,6 +17,22 @@ const Home: React.FC = () => {
 
     MapboxNavigation.launchNavigation({routes: [origin, destination], profile: ProfileIdentifier.AUTOMOBILE}).catch((error) => {
       console.error("launchNavigation", error)
+    })
+  }
+
+  function visualizeRoute() {
+    const origin = {
+      latitude: 50.66322650877968,
+      longitude: 3.0496891925960754
+    }
+
+    const destination = {
+      latitude: 50.63421502456915,
+      longitude: 3.021310992223101
+    }
+
+    MapboxNavigation.visualizeRoute({routes: [origin, destination]}).catch((error) => {
+      console.error("visualizeRouteError", error)
     })
   }
 
@@ -49,16 +51,12 @@ const Home: React.FC = () => {
         </IonHeader>
 
         <IonButton onClick={() => {
-          requestPerms()
-        }}>Request permissions</IonButton>
-
-        <IonButton onClick={() => {
-          checkPerms()
-        }}>Check permissions</IonButton>
-
-        <IonButton onClick={() => {
           launchNavigation()
-        }}>Test</IonButton>
+        }}>Start Navigation</IonButton>
+
+        <IonButton onClick={() => {
+          visualizeRoute()
+        }}>Visualize route</IonButton>
       </IonContent>
     </IonPage>
   );
