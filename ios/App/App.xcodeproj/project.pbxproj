@@ -14,7 +14,6 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
-		6D88C29C2B56DF61004A713E /* MapboxNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D88C29B2B56DF61004A713E /* MapboxNavigation.swift */; };
 		6D88C29E2B56DF76004A713E /* MapboxNavigationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D88C29D2B56DF76004A713E /* MapboxNavigationPlugin.swift */; };
 		6D88C2A02B56DF94004A713E /* MapboxNavigationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D88C29F2B56DF94004A713E /* MapboxNavigationPlugin.m */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
@@ -31,7 +30,6 @@
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		6D3802292B56C77900F0EE9C /* App-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "App-Bridging-Header.h"; sourceTree = "<group>"; };
-		6D88C29B2B56DF61004A713E /* MapboxNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapboxNavigation.swift; sourceTree = "<group>"; };
 		6D88C29D2B56DF76004A713E /* MapboxNavigationPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapboxNavigationPlugin.swift; sourceTree = "<group>"; };
 		6D88C29F2B56DF94004A713E /* MapboxNavigationPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapboxNavigationPlugin.m; sourceTree = "<group>"; };
 		6DA7D91D2B568BEE001D16D0 /* App-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "App-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -107,7 +105,6 @@
 		6D88C29A2B56DF44004A713E /* MapboxNavigation */ = {
 			isa = PBXGroup;
 			children = (
-				6D88C29B2B56DF61004A713E /* MapboxNavigation.swift */,
 				6D88C29D2B56DF76004A713E /* MapboxNavigationPlugin.swift */,
 				6D88C29F2B56DF94004A713E /* MapboxNavigationPlugin.m */,
 			);
@@ -259,7 +256,6 @@
 			files = (
 				6D88C29E2B56DF76004A713E /* MapboxNavigationPlugin.swift in Sources */,
 				6D88C2A02B56DF94004A713E /* MapboxNavigationPlugin.m in Sources */,
-				6D88C29C2B56DF61004A713E /* MapboxNavigation.swift in Sources */,
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,8 +1,7 @@
+import React from "react";
 import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import React, {useEffect} from "react";
 
-import {MapboxNavigation} from "../plugins/mapboxNavigation";
+import {MapboxNavigation, ProfileIdentifier} from "../plugins/mapboxNavigation";
 
 const Home: React.FC = () => {
 
@@ -19,7 +18,7 @@ const Home: React.FC = () => {
     })
   }
 
-  function testPassString() {
+  function launchNavigation() {
     const origin = {
       latitude: 50.66322650877968,
       longitude: 3.0496891925960754
@@ -30,24 +29,24 @@ const Home: React.FC = () => {
       longitude: 3.021310992223101
     }
 
-    MapboxNavigation.launchNavigation({routes : [origin, destination]})
+    MapboxNavigation.launchNavigation({routes: [origin, destination], profile: ProfileIdentifier.AUTOMOBILE}).catch((error) => {
+      console.error("launchNavigation", error)
+    })
   }
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Blank</IonTitle>
+          <IonTitle>Capacitor Mapbox Navigation</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Test</IonTitle>
+            <IonTitle size="large">Capacitor Mapbox Navigation</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer/>
-
 
         <IonButton onClick={() => {
           requestPerms()
@@ -58,7 +57,7 @@ const Home: React.FC = () => {
         }}>Check permissions</IonButton>
 
         <IonButton onClick={() => {
-          testPassString()
+          launchNavigation()
         }}>Test</IonButton>
       </IonContent>
     </IonPage>

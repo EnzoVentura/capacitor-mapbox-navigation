@@ -1,5 +1,12 @@
 import {ILocation} from "../types/location";
 
+export enum ProfileIdentifier {
+  AUTOMOBILE = ".automobile",
+  CYCLING = ".cycling",
+  WALKING = ".walking",
+  AUTOMOBILE_AVOIDING_TRAFFIC = ".automobileAvoidingTraffic",
+}
+
 export interface IMapboxNavigation {
   /**
    * Check the location permissions of the device.
@@ -18,5 +25,5 @@ export interface IMapboxNavigation {
    * Test simulated navigation
    * @since 0.0.1
    */
-  launchNavigation({routes}: { routes: Array<ILocation> }): Promise<void>;
+  launchNavigation({routes, profile}: { routes: Array<ILocation>, profile?: ProfileIdentifier }): Promise<void>;
 }
