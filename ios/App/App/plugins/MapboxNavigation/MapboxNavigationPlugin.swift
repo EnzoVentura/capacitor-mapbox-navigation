@@ -29,16 +29,18 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
     @objc public func visualizeRoute(_ call : CAPPluginCall) {
         routes = call.getArray("routes", NSDictionary.self) ?? [NSDictionary]()
         
-
-        var waypoints = [Waypoint]();
-        for route in routes {
-            waypoints.append(Waypoint(coordinate: CLLocationCoordinate2DMake(route["latitude"] as! CLLocationDegrees, route["longitude"] as! CLLocationDegrees)))
+pl        let waypoints = routes.compactMap { route -> Waypoint? in
+            guard let latitude = route["latitude"] as? CLLocationDegrees,
+                  let longitude = route["longitude"] as? CLLocationDegrees else {
+                return nil
+            }
+            return Waypoint(coordinate: CLLocationCoordinate2DMake(latitude, longitude))
         }
-        
-        if (waypoints.count < 2) {
+        guard waypoints.count >= 2 else {
             call.reject(NavigationError.INVALID_ROUTES.rawValue)
             return
         }
+        
         let routeOptions = NavigationRouteOptions(waypoints: waypoints, profileIdentifier: .cycling)
         
         Directions.shared.calculate(routeOptions) { [weak self] (session, result) in
@@ -82,21 +84,20 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
     @objc public func launchNavigation(_ call : CAPPluginCall) {
         routes = call.getArray("routes", NSDictionary.self) ?? [NSDictionary]()
         
-        /* let profile = call.getString("profile") ?? ".cycling"
-        let profileValue : ProfileIdentifier = ProfileIdentifier(rawValue: profile)
-        print("Profile :", profile, profileValue) */
-        
-
-        var waypoints = [Waypoint]();
-        for route in routes {
-            waypoints.append(Waypoint(coordinate: CLLocationCoordinate2DMake(route["latitude"] as! CLLocationDegrees, route["longitude"] as! CLLocationDegrees)))
+        let waypoints = routes.compactMap { route -> Waypoint? in
+            guard let latitude = route["latitude"] as? CLLocationDegrees,
+                  let longitude = route["longitude"] as? CLLocationDegrees else {
+                return nil
+            }
+            return Waypoint(coordinate: CLLocationCoordinate2DMake(latitude, longitude))
         }
-        if (waypoints.count < 2) {
+        guard waypoints.count >= 2 else {
             call.reject(NavigationError.INVALID_ROUTES.rawValue)
             return
         }
-        let routeOptions = NavigationRouteOptions(waypoints: waypoints, profileIdentifier: .cycling)
         
+        let routeOptions = NavigationRouteOptions(waypoints: waypoints, profileIdentifier: .cycling)
+    
         Directions.shared.calculate(routeOptions) { [weak self] (session, result) in
             switch result {
                 case .failure(let error):
@@ -105,27 +106,41 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
                     guard let strongSelf = self else {
                         return
                     }
+
+                    let indexedRouteResponse = IndexedRouteResponse(routeResponse: response, routeIndex: 0)
+                    let navigationService = MapboxNavigationService(
+                        indexedRouteResponse: indexedRouteResponse,
+                        customRoutingProvider: NavigationSettings.shared.directions,
+                        credentials: NavigationSettings.shared.directions.credentials,
+                        simulating: .onPoorGPS
+                    )
                 
-                    let indexedRouteResponse = IndexedRouteResponse(routeResponse: response, routeIndex: 0);
-                    let navigationService = MapboxNavigationService(indexedRouteResponse: indexedRouteResponse, customRoutingProvider: NavigationSettings.shared.directions, credentials: NavigationSettings.shared.directions.credentials, simulating: .onPoorGPS)
-                
-                    let navigationOptions = NavigationOptions(navigationService: navigationService)
+//                    let dayStyle = CustomDayStyle()
+//                    let styles: [Style] = [dayStyle]
+
+                    let navigationOptions = NavigationOptions( navigationService: navigationService)
                     let viewController = NavigationViewController(for: indexedRouteResponse, navigationOptions: navigationOptions)
-                    
+
                     viewController.modalPresentationStyle = .fullScreen
-                    // Render part of the route that has been traversed with full transparency, to give the illusion of a disappearing route.
                     viewController.routeLineTracksTraversal = true
-                    
-                    viewController.waypointStyle = .extrudedBuilding;
-                    viewController.delegate = strongSelf;
-                    
+                    viewController.waypointStyle = .extrudedBuilding
+            
+                
+                    viewController.delegate = strongSelf
+                
+
                     DispatchQueue.main.async {
-                        self?.setCenteredPopover(viewController)
-                        self?.bridge?.viewController?.present(viewController, animated: true, completion: nil)
+                        strongSelf.setCenteredPopover(viewController)
+                        strongSelf.bridge?.viewController?.present(viewController, animated: true, completion: nil)
                     }
                 }
             }
         call.resolve()
+    }
+    
+    public func navigationViewControllerDidDismiss(_ navigationViewController: NavigationViewController, byCanceling canceled: Bool) {
+          self.bridge?.triggerWindowJSEvent(eventName: "navigation_closed");
+          navigationViewController.dismiss(animated: true);
     }
 }
     
