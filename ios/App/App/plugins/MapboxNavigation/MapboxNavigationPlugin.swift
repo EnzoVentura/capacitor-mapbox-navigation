@@ -1,6 +1,7 @@
 import Foundation
 import Capacitor
 import CoreLocation
+import UIKit
 
 import MapboxDirections
 import MapboxCoreNavigation
@@ -29,7 +30,7 @@ public class MapboxNavigationPlugin : CAPPlugin, NavigationViewControllerDelegat
     @objc public func visualizeRoute(_ call : CAPPluginCall) {
         routes = call.getArray("routes", NSDictionary.self) ?? [NSDictionary]()
         
-pl        let waypoints = routes.compactMap { route -> Waypoint? in
+        let waypoints = routes.compactMap { route -> Waypoint? in
             guard let latitude = route["latitude"] as? CLLocationDegrees,
                   let longitude = route["longitude"] as? CLLocationDegrees else {
                 return nil
@@ -115,20 +116,19 @@ pl        let waypoints = routes.compactMap { route -> Waypoint? in
                         simulating: .onPoorGPS
                     )
                 
-//                    let dayStyle = CustomDayStyle()
-//                    let styles: [Style] = [dayStyle]
-
-                    let navigationOptions = NavigationOptions( navigationService: navigationService)
+                    let bottomBanner = CustomBottomBarViewController()
+            
+                    let navigationOptions = NavigationOptions(navigationService: navigationService, bottomBanner: bottomBanner)
                     let viewController = NavigationViewController(for: indexedRouteResponse, navigationOptions: navigationOptions)
-
+                                
                     viewController.modalPresentationStyle = .fullScreen
                     viewController.routeLineTracksTraversal = true
                     viewController.waypointStyle = .extrudedBuilding
-            
                 
+                    viewController.floatingButtons = []
+                    viewController.showsSpeedLimits = false
                     viewController.delegate = strongSelf
                 
-
                     DispatchQueue.main.async {
                         strongSelf.setCenteredPopover(viewController)
                         strongSelf.bridge?.viewController?.present(viewController, animated: true, completion: nil)
@@ -144,3 +144,44 @@ pl        let waypoints = routes.compactMap { route -> Waypoint? in
     }
 }
     
+
+// MARK: - CustomBottomBarViewController
+
+class CustomBottomBarViewController: ContainerViewController, CustomBottomBannerViewDelegate {
+    weak var navigationViewController: NavigationViewController?
+    
+    lazy var bannerView: CustomBottomBannerView = {
+        let banner = CustomBottomBannerView()
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        banner.delegate = self
+        return banner
+    }()
+    
+    override func loadView() {
+        super.loadView()
+     
+        view.addSubview(bannerView)
+         
+        NSLayoutConstraint.activate([
+            bannerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bannerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bannerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bannerView.heightAnchor.constraint(equalToConstant: 132) // height of bottom banner
+       ])
+    }
+         
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    // MARK: - NavigationServiceDelegate implementation
+     
+    func navigationService(_ service: NavigationService, didUpdate progress: RouteProgress, with location: CLLocation, rawLocation: CLLocation) {
+        bannerView.eta = "~\(Int(round(progress.durationRemaining / 60))) min"
+    }
+     
+    // MARK: - CustomBottomBannerViewDelegate implementation
+    func customBottomBannerDidCancel(_ banner: CustomBottomBannerView) {
+        navigationViewController?.dismiss(animated: true, completion: nil)
+    }
+}

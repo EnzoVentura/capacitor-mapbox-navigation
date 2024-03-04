@@ -4,34 +4,27 @@ import {IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@
 import {MapboxNavigation, ProfileIdentifier} from "../plugins/mapboxNavigation";
 
 const Home: React.FC = () => {
+  const origin = {
+    latitude: 50.66322650877968,
+    longitude: 3.0496891925960754
+  }
+
+  const destination = {
+    latitude: 50.63421502456915,
+    longitude: 3.021310992223101
+  }
+
   function launchNavigation() {
-    const origin = {
-      latitude: 50.66322650877968,
-      longitude: 3.0496891925960754
-    }
 
-    const destination = {
-      latitude: 50.63421502456915,
-      longitude: 3.021310992223101
-    }
-
-    MapboxNavigation.launchNavigation({routes: [origin, destination], profile: ProfileIdentifier.AUTOMOBILE}).catch((error) => {
+    MapboxNavigation.launchNavigation({routes: [destination, origin], profile: ProfileIdentifier.AUTOMOBILE}).catch((error) => {
       console.error("launchNavigation", error)
     })
   }
 
   function visualizeRoute() {
-    const origin = {
-      latitude: 50.66322650877968,
-      longitude: 3.0496891925960754
-    }
 
-    const destination = {
-      latitude: 50.63421502456915,
-      longitude: 3.021310992223101
-    }
 
-    MapboxNavigation.visualizeRoute({routes: [origin, destination]}).catch((error) => {
+    MapboxNavigation.visualizeRoute({routes: [destination, origin]}).catch((error) => {
       console.error("visualizeRouteError", error)
     })
   }
